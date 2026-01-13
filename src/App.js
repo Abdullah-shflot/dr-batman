@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Shield, Clock, Phone, User, Activity } from 'lucide-react';
 
 export default function App() {
   const [booked, setBooked] = useState(false);
-  const [lang, setLang] = useState('ar'); // حالة اللغة (عربي افتراضي)
+  const [lang, setLang] = useState('ar');
+  const [loading, setLoading] = useState(true); // حالة التحميل
 
-  // نصوص الموقع باللغتين
+  // كود التحميل (يختفي بعد 2 ثانية)
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // كود تغيير عنوان المتصفح تلقائياً حسب اللغة
+  useEffect(() => {
+    document.title = lang === 'ar' ? 'دكتور باتمان - عيادة غوثام' : 'Dr. Batman - Gotham Clinic';
+  }, [lang]);
+
   const content = {
     ar: {
       dir: 'rtl',
@@ -39,13 +50,28 @@ export default function App() {
 
   const t = content[lang];
 
+  // شاشة اللودنج (تظهر إذا كانت loading تساوي true)
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center">
+        <img 
+          src="/imgs/logo (1).png" 
+          alt="Loading..." 
+          className="w-32 h-32 animate-pulse object-contain" 
+        />
+        <div className="mt-4 text-yellow-500 font-bold tracking-widest animate-bounce">
+          
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans" dir={t.dir}>
       
-      {/* 1. Navbar (الشريط العلوي) */}
+      {/* 1. Navbar */}
       <nav className="p-6 flex justify-between items-center border-b border-zinc-800 sticky top-0 bg-black/90 backdrop-blur-md z-50">
         <div className="flex items-center gap-3">
-          {/* صورة اللوجو الصغيرة */}
           <img 
             src="/imgs/logo (1).png" 
             alt="Logo" 
@@ -68,10 +94,10 @@ export default function App() {
         </div>
       </nav>
 
-      {/* 2. Hero Section (واجهة الموقع) */}
+      {/* 2. Hero Section */}
       <section className="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="flex-1">
-          <h2 className="text-6xl font-black mb-6 leading-tight">
+          <h2 className="text-6xl font-black mb-6 leading-tight text-white">
             {t.heroH1} <br /> <span className="text-yellow-500">{t.heroH1Span}</span>
           </h2>
           <p className="text-xl text-gray-400 mb-8 max-w-lg">{t.heroDesc}</p>
@@ -92,7 +118,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 3. Stats (أرقام) */}
+      {/* 3. Stats */}
       <div className="bg-zinc-900/50 py-12 border-y border-zinc-800">
         <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[ 
@@ -107,7 +133,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 4. Booking Form (نموذج الحجز) */}
+      {/* 4. Booking Form */}
       <section id="booking" className="container mx-auto px-6 py-24">
         <div className="max-w-4xl mx-auto bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
           <div className="flex-1 p-12 bg-yellow-500 text-black">
